@@ -86,8 +86,8 @@ class TextExtracter():
         json_content = response.choices[0].message.content
 
         # Write the content to a JSON file
-        with open('sample/recipt_summary.json', 'w') as json_file:
-            json_file.write(json_content)
+        # with open('sample/recipt_summary.json', 'w') as json_file:
+        #    json_file.write(json_content)
         
         print("===== [Finished] Summarize Text - OpenAI API =====")
         return json_content
