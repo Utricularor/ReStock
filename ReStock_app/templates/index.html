@@ -26,18 +26,18 @@
       </tr>
       {% for ingredient in ingredients %}
       <tr>
-        <td>{{ ingredient.商品名 }}</td>
-        <td>{{ ingredient.数量 }}</td>
+        <td>{{ ingredient.item_name }}</td>
+        <td>{{ ingredient.item_quantity }}</td>
         <td>
           <form action="/edit" method="get">
-            <input type="hidden" name="item_name" value="{{ ingredient.商品名 }}">
-            <input type="hidden" name="item_quantity" value="{{ ingredient.数量 }}">
+            <input type="hidden" name="item_name" value="{{ ingredient.item_name }}">
+            <input type="hidden" name="item_quantity" value="{{ ingredient.item_quantity }}">
             <input type="submit" name="modify_item" value="編集">
           </form>
         </td>
         <td>
           <form action="/" method="post">
-            <input type="hidden" name="delete_item" value="{{ ingredient.商品名 }}">
+            <input type="hidden" name="delete_item" value="{{ ingredient.item_name }}">
             <input type="submit" value="削除">
           </form>
         </td>
