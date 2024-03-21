@@ -1,4 +1,5 @@
 .venv/
+.vscode/
 
 ReStock_app/__pycache__/*
 ReStock_app/.env
