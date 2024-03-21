@@ -64,20 +64,28 @@ class StockManager():
             print(f"An error occurred: {e}")
 
     def get_all_items(self):
+        '''
+        在庫リストから商品をすべて取得する関数
+        '''
         try:
             with pyodbc.connect(self.ODBC) as conn:
                 with conn.cursor() as cursor:
                     cursor.execute("SELECT ItemName, NumberOfItem FROM Stock;")
                     rows = cursor.fetchall()
-                    items = [{"商品名": row[0], "数量": row[1]} for row in rows]
-                    items = items.encode().decode('unicode-escape')
-                    data = json.loads(items)
-                    return data['明細']
+                    items = [{"item_name": row[0], "item_quantity": row[1]} for row in rows]
+                    data = json.dumps(items, ensure_ascii=False)
+                    return json.loads(data)
         except pyodbc.Error as e:
             print(f"An error occurred: {e}")
             return None
         
     def add_to_deletedlist(self, item_name):
+        '''
+        在庫リストから削除されたものを家にないものリストに追加する関数
+
+        引数
+        - item_name: 在庫リストから削除されたもの
+        '''
         try:
             with pyodbc.connect(self.ODBC) as conn:
                 with conn.cursor() as cursor:
@@ -88,6 +96,9 @@ class StockManager():
             return None
         
     def get_deleted_items(self):
+        '''
+        家にないものをすべて取得する関数
+        '''
         try:
             with pyodbc.connect(self.ODBC) as conn:
                 with conn.cursor() as cursor:
