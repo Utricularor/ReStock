@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>食材リスト</title>
+    <title>ReStock</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   </head>
   <body>
-    <h1>食材リスト</h1>
+    <h1>ReStock</h1>
     <form action="/uploads" method="post" enctype="multipart/form-data">
       <input type="file" name="file">
       <input type="submit" value="在庫追加" id="upload-btn" disabled>
@@ -17,6 +17,7 @@
       <input type="number" id="item_quantity" name="item_quantity" min="1" required>
       <input type="submit" value="追加">
     </form>
+    <h2>家にあるもの一覧</h2>
     <table>
       <tr>
         <th>食材名</th>
@@ -37,15 +38,15 @@
         </td>
         <td>
           <form action="/" method="post">
-            <input type="hidden" name="delete_item_name" value="{{ ingredient.item_name }}">
-            <input type="hidden" name="delete_item_quantity" value="{{ ingredient.item_quantity }}">
+            <input type="hidden" name="delete_stock_item_name" value="{{ ingredient.item_name }}">
+            <input type="hidden" name="delete_stock_item_quantity" value="{{ ingredient.item_quantity }}">
             <input type="submit" value="削除">
           </form>
         </td>
       </tr>
       {% endfor %}
     </table>
-    <h2>家にないものリスト</h2>
+    <h2>家にないもの一覧</h2>
     <table>
       <tr>
         <th>食材名</th>
@@ -58,12 +59,16 @@
         <td>{{ deleted_item.name }}</td>
         <td>{{ deleted_item.quantity }}</td>
         <td>
-          <form action="/edit" method="get">
+          <form action="/editdeleted" method="get">
+            <input type="hidden" name="deleted_item_name" value="{{ deleted_item.name }}">
+            <input type="hidden" name="deleted_item_quantity" value="{{ deleted_item.quantity }}">
             <input type="submit" name="modify_item" value="編集">
           </form>
         </td>
         <td>
           <form action="/" method="post">
+            <input type="hidden" name="delete_deletedstock_item_name" value="{{ deleted_item.name }}">
+            <input type="hidden" name="delete_deletedstock_item_quantity" value="{{ deleted_item.quantity }}">
             <input type="submit" value="削除">
           </form>
         </td>

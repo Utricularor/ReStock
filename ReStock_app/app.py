@@ -27,15 +27,26 @@ def index():
             stock_manager.insert_stock(item_name, item_quantity)
             ingredients = stock_manager.get_all_items()
 
-        elif 'delete_item' in request.form:
-            # 食材を削除
-            item_name = request.form['delete_item_name']
-            item_quantity = request.form['delete_item_quantity']
+        elif 'delete_stock_item_name' in request.form:
+            # 商品を削除
+            item_name = request.form['delete_stock_item_name']
+            item_quantity = request.form['delete_stock_item_quantity']
             stock_manager.delete_stock(item_name)
             ingredients = stock_manager.get_all_items()
 
             # DeletedStockを更新
             stock_manager.insert_to_deletedlist(item_name, item_quantity)
+            
+            # 家にないものリストを更新
+            deleted_items = stock_manager.get_deleted_items()
+        
+        elif 'delete_deletedstock_item_name' in request.form:
+            # 家にないものリストから商品を削除
+            item_name = request.form['delete_deletedstock_item_name']
+            item_quantity = request.form['delete_deletedstock_item_quantity']
+            stock_manager.delete_from_DeletedStock(item_name)
+
+            # 家にないものリストを更新
             deleted_items = stock_manager.get_deleted_items()
             
     # return render_template("index.html", ingredients=ingredients)  
@@ -60,7 +71,13 @@ def edit():
         item_name = request.args['item_name']
         item_quantity = request.args['item_quantity']
         return render_template('edit.html', item_name=item_name, item_quantity=item_quantity)
-    return redirect(url_for('index'))
+
+@app.route("/editdeleted", methods=['GET'])
+def editdeleted():
+    if 'deleted_item_name' in request.args and 'deleted_item_quantity' in request.args:
+        item_name = request.args['deleted_item_name']
+        item_quantity = request.args['deleted_item_quantity']
+        return render_template('editdeleted.html', item_name=item_name, item_quantity=item_quantity)
 
 @app.route("/modify", methods=['POST'])
 def modify():
@@ -76,6 +93,19 @@ def modify():
             stock_manager.insert_stock(new_item_name, new_item_quantity)
     return redirect(url_for('index'))
 
+@app.route("/modifydeleted", methods=['POST'])
+def modifydeleted():
+    if request.method == 'POST':
+        if 'old_item_name' in request.form and 'new_item_name' in request.form and 'new_item_quantity' in request.form:
+            # 古い情報の商品を削除
+            old_item_name = request.form['old_item_name']
+            stock_manager.delete_from_DeletedStock(old_item_name)
+
+            # 新しい情報で商品を追加
+            new_item_name = request.form['new_item_name']
+            new_item_quantity = int(request.form['new_item_quantity'])
+            stock_manager.insert_to_deletedlist(new_item_name, new_item_quantity)
+    return redirect(url_for('index'))
 
 if __name__ == "__main__":
     app.run(debug=True)
