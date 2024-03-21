@@ -21,6 +21,9 @@ class StockManager():
                     ';Connection Timeout=30;'
 
     def check_connection(self): 
+        '''
+        データベースとの接続確認を行うための関数
+        '''
         with pyodbc.connect(self.ODBC) as conn:
             with conn.cursor() as cursor:
                 cursor.execute("SELECT @@version;")
@@ -31,6 +34,9 @@ class StockManager():
                     row = cursor.fetchone()
                 
     def insert_stock(self, item_name, number_of_item):
+        '''
+        Stockテーブルに買った商品データを挿入する関数
+        '''
         try:
             with pyodbc.connect(self.ODBC) as conn:
                 with conn.cursor() as cursor:
@@ -40,12 +46,15 @@ class StockManager():
             if e.args[0] == '23000':
                 with pyodbc.connect(self.ODBC) as conn:
                     with conn.cursor() as cursor:
-                        cursor.execute(f"UPDATE Stock SET NumberOfItem = NumberOfItem + 1 WHERE ItemName = ?;", [item_name])
+                        cursor.execute(f"UPDATE Stock SET NumberOfItem = NumberOfItem + ? WHERE ItemName = ?;", (number_of_item, item_name))
                         print(f"Item '{item_name}' quantity updated by 1.")
             else:
                 print(f"An error occurred: {e}")
 
     def delete_stock(self, item_name):
+        '''
+        Stockテーブルから商品データを削除する関数
+        '''
         try:
             with pyodbc.connect(self.ODBC) as conn:
                 with conn.cursor() as cursor:
@@ -55,6 +64,10 @@ class StockManager():
             print(f"An error occurred: {e}")
 
     def insert_at_once(self, data_dict):
+        '''
+        レシートのテキストから抽出した商品JSONデータから
+        一度にStockテーブルにデータを挿入する関数
+        '''
         try:
             recipt_items = data_dict['明細']
             
@@ -85,15 +98,21 @@ class StockManager():
 
         引数
         - item_name: 在庫リストから削除されたもの
+        - number_of_item: 在庫リストから削除されたものの数量
         '''
         try:
             with pyodbc.connect(self.ODBC) as conn:
                 with conn.cursor() as cursor:
-                    cursor.execute(f"INSERT INTO Stock (ItemName, NumberOfItem) VALUES (?, ?);", (item_name, number_of_item))
+                    cursor.execute(f"INSERT INTO DeletedStock (ItemName, NumberOfItem) VALUES (?, ?);", (item_name, number_of_item))
                     print(f"Item '{item_name}' with quantity {number_of_item} inserted to DeletedStock successfully.")
         except pyodbc.Error as e:
-            print(f"An error occurred: {e}")
-            return None
+            if e.args[0] == '23000':
+                with pyodbc.connect(self.ODBC) as conn:
+                    with conn.cursor() as cursor:
+                        cursor.execute(f"UPDATE DeletedStock SET NumberOfItem = NumberOfItem + ? WHERE ItemName = ?;", (number_of_item, item_name))
+                        print(f"Item '{item_name}' quantity updated by 1.")
+            else:
+                print(f"An error occurred: {e}")
         
     def get_deleted_items(self):
         '''
@@ -110,3 +129,15 @@ class StockManager():
         except pyodbc.Error as e:
             print(f"An error occurred: {e}")
             return None
+        
+    def delete_from_DeletedStock(self, item_name):
+        '''
+        DeletedStockテーブルから商品データを削除する関数
+        '''
+        try:
+            with pyodbc.connect(self.ODBC) as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute(f"DELETE FROM DeletedStock WHERE ItemName = ?;", [item_name])
+                    print(f"Item '{item_name}' deleted from DeletedStock successfully.")
+        except pyodbc.Error as e:
+            print(f"An error occurred: {e}")
