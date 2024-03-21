@@ -37,7 +37,8 @@
         </td>
         <td>
           <form action="/" method="post">
-            <input type="hidden" name="delete_item" value="{{ ingredient.item_name }}">
+            <input type="hidden" name="delete_item_name" value="{{ ingredient.item_name }}">
+            <input type="hidden" name="delete_item_quantity" value="{{ ingredient.item_quantity }}">
             <input type="submit" value="削除">
           </form>
         </td>
@@ -48,10 +49,24 @@
     <table>
       <tr>
         <th>食材名</th>
+        <th>数量</th>
+        <th>編集</th>
+        <th>削除</th>
       </tr>
       {% for deleted_item in deleted_items %}
       <tr>
-        <td>{{ deleted_item.ItemName }}</td>
+        <td>{{ deleted_item.name }}</td>
+        <td>{{ deleted_item.quantity }}</td>
+        <td>
+          <form action="/edit" method="get">
+            <input type="submit" name="modify_item" value="編集">
+          </form>
+        </td>
+        <td>
+          <form action="/" method="post">
+            <input type="submit" value="削除">
+          </form>
+        </td>
       </tr>
       {% endfor %}
     </table>

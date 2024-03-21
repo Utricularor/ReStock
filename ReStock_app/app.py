@@ -17,6 +17,8 @@ stock_manager = StockManager()
 def index():
     # 開始時点での在庫を取得
     ingredients = stock_manager.get_all_items()
+    deleted_items = stock_manager.get_deleted_items()
+
     if request.method == 'POST':
         if 'item_name' in request.form and 'item_quantity' in request.form:
             # 新しい食材を追加
@@ -27,12 +29,17 @@ def index():
 
         elif 'delete_item' in request.form:
             # 食材を削除
-            item_name = request.form['delete_item']
+            item_name = request.form['delete_item_name']
+            item_quantity = request.form['delete_item_quantity']
             stock_manager.delete_stock(item_name)
             ingredients = stock_manager.get_all_items()
+
+            # DeletedStockを更新
+            stock_manager.insert_to_deletedlist(item_name, item_quantity)
+            deleted_items = stock_manager.get_deleted_items()
             
-    return render_template("index.html", ingredients=ingredients)  
-    # return render_template("index.html", ingredients=ingredients, deleted_items=deleted_items)
+    # return render_template("index.html", ingredients=ingredients)  
+    return render_template("index.html", ingredients=ingredients, deleted_items=deleted_items)
 
 # アップロード処理用のルート
 @app.route("/uploads", methods=['POST'])

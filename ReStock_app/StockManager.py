@@ -79,7 +79,7 @@ class StockManager():
             print(f"An error occurred: {e}")
             return None
         
-    def add_to_deletedlist(self, item_name):
+    def insert_to_deletedlist(self, item_name, number_of_item):
         '''
         在庫リストから削除されたものを家にないものリストに追加する関数
 
@@ -89,8 +89,8 @@ class StockManager():
         try:
             with pyodbc.connect(self.ODBC) as conn:
                 with conn.cursor() as cursor:
-                    cursor.execute(f"INSERT INTO DeletedStock (ItemName) VALUES (?);", item_name)
-                    print(f"Item '{item_name}' inserted deletedList successfully.")
+                    cursor.execute(f"INSERT INTO Stock (ItemName, NumberOfItem) VALUES (?, ?);", (item_name, number_of_item))
+                    print(f"Item '{item_name}' with quantity {number_of_item} inserted to DeletedStock successfully.")
         except pyodbc.Error as e:
             print(f"An error occurred: {e}")
             return None
@@ -102,12 +102,11 @@ class StockManager():
         try:
             with pyodbc.connect(self.ODBC) as conn:
                 with conn.cursor() as cursor:
-                    cursor.execute("SELECT ItemName FROM DeletedStock;")
+                    cursor.execute("SELECT ItemName, NumberOfItem FROM DeletedStock;")
                     rows = cursor.fetchall()
-                    items = [{"商品名": row[0]} for row in rows]
-                    items = items.encode().decode('unicode-escape')
-                    data = json.loads(items)
-                    return data['明細']
+                    items = [{"name": row[0], "quantity": row[1]} for row in rows]
+                    data = json.dumps(items, ensure_ascii=False)
+                    return json.loads(data)
         except pyodbc.Error as e:
             print(f"An error occurred: {e}")
             return None
