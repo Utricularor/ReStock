@@ -1,7 +1,7 @@
 .venv/
 
-RestoreApp_flask/__pycache__/*
-RestoreApp_flask/.env
-RestoreApp_flask/uploads/*
-RestoreApp_flask/output/*
-RestoreApp_flask/sample/*
+ReStock_app/__pycache__/*
+ReStock_app/.env
+ReStock_app/uploads/*
+ReStock_app/output/*
+ReStock_app/sample/*
