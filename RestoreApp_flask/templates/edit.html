@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>食材編集</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+    <h1>食材編集</h1>
+    <form class="modify-form" action="/modify" method="post">
+      <label for="old_item_name">古い食材名:</label>
+      <input type="text" id="old_item_name" name="old_item_name" value="{{ item_name }}" readonly>
+      <label for="old_item_quantity">古い数量:</label>
+      <input type="number" id="old_item_quantity" name="old_item_quantity" value="{{ item_quantity }}" readonly>
+      <label for="new_item_name">新しい食材名:</label>
+      <input type="text" id="new_item_name" name="new_item_name" required>
+      <label for="new_item_quantity">新しい数量:</label>
+      <input type="number" id="new_item_quantity" name="new_item_quantity" min="1" required>
+      <input type="submit" value="更新">
+    </form>
+  </body>
+</html>

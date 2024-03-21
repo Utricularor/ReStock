@@ -1,0 +1,5 @@
+RestoreApp_flask/__pycache__/*
+RestoreApp_flask/.env
+RestoreApp_flask/uploads/*
+RestoreApp_flask/output/*
+RestoreApp_flask/sample/*

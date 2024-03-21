@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>食材リスト</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+    <h1>食材リスト</h1>
+    <form action="/uploads" method="post" enctype="multipart/form-data">
+      <input type="file" name="file">
+      <input type="submit" value="在庫追加" id="upload-btn" disabled>
+    </form>
+    <form action="/" method="post">
+      <label for="item_name">食材名:</label>
+      <input type="text" id="item_name" name="item_name" required>
+      <label for="item_quantity">数量:</label>
+      <input type="number" id="item_quantity" name="item_quantity" min="1" required>
+      <input type="submit" value="追加">
+    </form>
+    <table>
+      <tr>
+        <th>食材名</th>
+        <th>在庫数</th>
+        <th>編集</th>
+        <th>削除</th>
+      </tr>
+      {% for ingredient in ingredients %}
+      <tr>
+        <td>{{ ingredient.商品名 }}</td>
+        <td>{{ ingredient.数量 }}</td>
+        <td>
+          <form action="/edit" method="get">
+            <input type="hidden" name="item_name" value="{{ ingredient.商品名 }}">
+            <input type="hidden" name="item_quantity" value="{{ ingredient.数量 }}">
+            <input type="submit" name="modify_item" value="編集">
+          </form>
+        </td>
+        <td>
+          <form action="/" method="post">
+            <input type="hidden" name="delete_item" value="{{ ingredient.商品名 }}">
+            <input type="submit" value="削除">
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    <h2>家にないものリスト</h2>
+    <table>
+      <tr>
+        <th>食材名</th>
+      </tr>
+      {% for deleted_item in deleted_items %}
+      <tr>
+        <td>{{ deleted_item.ItemName }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    <script>
+      const uploadBtn = document.getElementById('upload-btn');
+      const fileInput = document.querySelector('input[type="file"]');
+    
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) {
+          uploadBtn.disabled = false;
+          uploadBtn.style.backgroundColor = '#4CAF50';
+          uploadBtn.style.cursor = 'pointer';
+        } else {
+          uploadBtn.disabled = true;
+          uploadBtn.style.backgroundColor = '#ccc';
+          uploadBtn.style.cursor = 'not-allowed';
+        }
+      });
+    </script>
+  </body>
+</html>
